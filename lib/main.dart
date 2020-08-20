@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
+import 'quiz_brain.dart';
+
 void main() => runApp(Quizzler());
 
 class Quizzler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.grey.shade900,
         body: SafeArea(
+//          bottom: false,
+//          maintainBottomViewPadding: false,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: QuizPage(),
@@ -25,6 +30,16 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  //list of questions with tracking items
+  QuizBrain quizBrain = QuizBrain();
+
+  //Manage score, question number, when button is clicked
+  void runQuestion(bool answer) {
+    setState(() {
+      quizBrain.runQuestion(answer, context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +52,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                'This is where the question text will go.',
+                quizBrain.displayQuestionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -61,7 +76,8 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked true.
+                //user picked true
+                runQuestion(true);
               },
             ),
           ),
@@ -80,18 +96,16 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
+                runQuestion(false);
               },
             ),
           ),
         ),
-        //TODO: Add a Row here as your score keeper
+        //ScoreKeeper
+        Row(
+          children: quizBrain.scoreKeeper.scoreKeeper,
+        ),
       ],
     );
   }
 }
-
-/*
-question1: 'You can lead a cow down stairs but not up stairs.', false,
-question2: 'Approximately one quarter of human bones are in the feet.', true,
-question3: 'A slug\'s blood is green.', true,
-*/
